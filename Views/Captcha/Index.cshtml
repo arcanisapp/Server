@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>hCaptcha</title>
+
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
+            font-family: sans-serif;
+        }
+
+        .h-captcha {
+            min-width: 300px;
+            max-width: 100%;
+        }
+
+        @@media (max-width: 400px) {
+            body
+
+        {
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="h-captcha" data-sitekey="0a802d00-5970-457a-9b08-abc8a9285cfe"></div>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</body>
+</html>
