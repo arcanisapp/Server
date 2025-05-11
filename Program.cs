@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Server.Crypto;
 using Server.Data;
 using Server.Services;
 
@@ -16,6 +17,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IHCaptchaService, HCaptchaService>();
+
+builder.Services.AddScoped<IProofOfWorkService, ProofOfWorkService>();
+
+builder.Services.AddScoped<IShakeGenerator, ShakeGenerator>();
 
 var app = builder.Build();
 
