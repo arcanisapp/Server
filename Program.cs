@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Crypto;
 using Server.Data;
 using Server.Services;
+using Server.Services.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,11 @@ builder.Services.AddScoped<IHCaptchaService, HCaptchaService>();
 builder.Services.AddScoped<IProofOfWorkService, ProofOfWorkService>();
 
 builder.Services.AddScoped<IShakeGenerator, ShakeGenerator>();
+
+builder.Services.AddSingleton<IMlDsaKeyVerifier, MlDsaKeyVerifier>();
+
+builder.Services.AddSingleton<ITimestampValidator>(new TimestampValidator(maxSkewSeconds: 30));
+
 
 var app = builder.Build();
 
