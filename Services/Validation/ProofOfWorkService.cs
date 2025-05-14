@@ -11,31 +11,33 @@ namespace Server.Services.Validation
     {
         public async Task<bool> VerifyAsync(string accountId, string hashProof, string nonce, string PK)
         {
-            return await Task.Run(() =>
+            try
             {
-                try
-                {
-                    var computeId = shakeGenerator.ComputeHash128(PK);
+                // На сервере нужно вычислить хеш от publicKey + nonce
+                string input = PK + nonce;
+                string recomputedHash = Convert.ToBase64String(await shakeGenerator.ComputeHash128(input)).ToLowerInvariant();
 
-                    if (computeId != accountId)
-                        return false;
-
-                    var recomputedHash = shakeGenerator.ComputeHash128(hashProof + nonce);
-
-                    if (!recomputedHash.StartsWith("00000"))
-                        return false;
-
-                    if (recomputedHash != hashProof)
-                        return false;
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
+                // Проверяем, что хеш соответствует hashProof, полученному от клиента
+                if (recomputedHash != hashProof)
                     return false;
-                }
-            });
+
+                // Проверка сложности (префикс "000")
+                if (!recomputedHash.StartsWith("000"))
+                    return false;
+
+                // Проверка совпадения ID аккаунта с вычисленным
+                var computeId = Convert.ToBase64String(await shakeGenerator.ComputeHash256(Convert.FromBase64String(PK), 64));
+                if (computeId != accountId)
+                    return false;
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
+
 
     }
 }

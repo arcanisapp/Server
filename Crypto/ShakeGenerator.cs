@@ -5,19 +5,34 @@ namespace Server.Crypto
 {
     public interface IShakeGenerator
     {
-        string ComputeHash128(string input, int outputLength = 32);
+        Task<byte[]> ComputeHash128(string input);
+        Task<byte[]> ComputeHash256(byte[] input, int outputLength = 32);
     }
     public class ShakeGenerator : IShakeGenerator
     {
-        public string ComputeHash128(string input, int outputLength = 32)
+        public async Task<byte[]> ComputeHash128(string input)
         {
-            var digest = new ShakeDigest(128);
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            digest.BlockUpdate(inputBytes, 0, inputBytes.Length);
+            return await Task.Run(() =>
+            {
+                var shake = new ShakeDigest(128);
+                byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+                shake.BlockUpdate(inputBytes, 0, inputBytes.Length);
+                byte[] output = new byte[32];
+                shake.DoFinal(output, 0);
+                return output;
+            });
+        }
 
-            byte[] output = new byte[outputLength];
-            digest.DoFinal(output, 0);
-            return Convert.ToHexString(output).ToLowerInvariant();
+        public async Task<byte[]> ComputeHash256(byte[] input, int outputLength = 32)
+        {
+            return await Task.Run(() =>
+            {
+                var digest = new ShakeDigest(256);
+                digest.BlockUpdate(input, 0, input.Length);
+                byte[] output = new byte[outputLength];
+                digest.DoFinal(output, 0);
+                return output;
+            });
         }
     }
 }

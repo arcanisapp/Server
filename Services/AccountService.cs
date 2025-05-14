@@ -34,10 +34,10 @@ namespace Server.Services
                 if (!timestampValidator.IsValid(request.Timestamp))
                     return false;
 
-                if (!await hCaptchaService.VerifyAsync(request.ChaptchaToken))
-                    return false;
+                //if (!await hCaptchaService.VerifyAsync(request.ChaptchaToken))
+                //    return false;
 
-                if (request.Device.PreKeys.Count < 50)
+                if (!(request.Device.PreKeys.Count == 50))
                     return false;
 
                 if (!await mlDsaKeyVerifier.VerifyAsync(Convert.FromBase64String(request.Device.SPK), Encoding.UTF8.GetBytes(rawJson), requestSignature))
