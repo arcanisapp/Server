@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Server.Crypto;
 using Server.Services;
+using Server.Services.Validation;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IAccountService accountService) : ControllerBase
+    public class DeviceController(IDeviceService deviceService) : ControllerBase
     {
-        [HttpPost("register")]
-        public async Task<IActionResult> Register()
+        [HttpGet("add")]
+        public async Task<IActionResult> AddDevice()
         {
             try
             {
@@ -23,14 +26,13 @@ namespace Server.Controllers
                 {
                     rawJson = await reader.ReadToEndAsync();
                 }
-
-                var result = await accountService.CreateAccountAsync(signatureBytes, rawJson);
+                var result = await deviceService.AddDeviceRequestAsync(signatureBytes, rawJson);
 
                 if (!result)
                     return BadRequest("Invalid signature or data");
 
                 return Ok();
-            }
+            }   
             catch (Exception ex)
             {
                 return BadRequest();

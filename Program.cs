@@ -31,6 +31,8 @@ builder.Services.AddScoped<IShakeGenerator, ShakeGenerator>();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 
+builder.Services.AddScoped<IDeviceService, DeviceService>();
+
 builder.Services.AddSingleton<IMlDsaKeyVerifier, MlDsaKeyVerifier>();
 
 builder.Services.AddSingleton<ITimestampValidator>(new TimestampValidator(maxSkewSeconds: 30));

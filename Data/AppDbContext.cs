@@ -11,6 +11,7 @@ namespace Server.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<PreKey> PreKeys { get; set; }
+        public DbSet<AddDeviceData> AddDeviceData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
