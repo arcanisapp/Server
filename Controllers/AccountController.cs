@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Server.Services;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace Server.Controllers
     public class AccountController(IAccountService accountService) : ControllerBase
     {
         [HttpPost("register")]
+        [EnableRateLimiting("AddDevice")]
         public async Task<IActionResult> Register()
         {
             try

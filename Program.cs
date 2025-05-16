@@ -1,9 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Server.Crypto;
 using Server.Data;
-using Server.Services;
-using Server.Services.Validation;
-using System.IO.Compression;
+using Server.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,20 +20,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IHCaptchaService, HCaptchaService>();
+builder.Services.AddCustomRateLimiters();
 
-builder.Services.AddScoped<IProofOfWorkService, ProofOfWorkService>();
-
-builder.Services.AddScoped<IShakeGenerator, ShakeGenerator>();
-
-builder.Services.AddScoped<IAccountService, AccountService>();
-
-builder.Services.AddScoped<IDeviceService, DeviceService>();
-
-builder.Services.AddSingleton<IMlDsaKeyVerifier, MlDsaKeyVerifier>();
-
-builder.Services.AddSingleton<ITimestampValidator>(new TimestampValidator(maxSkewSeconds: 30));
-
+builder.Services.AddAppServices();
 
 var app = builder.Build();
 
@@ -46,16 +32,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.Use(async (context, next) =>
-{
-    if (context.Request.Headers.TryGetValue("Content-Encoding", out var encoding) &&
-        encoding.ToString().Contains("gzip"))
-    {
-        context.Request.Body = new GZipStream(context.Request.Body, CompressionMode.Decompress);
-    }
 
-    await next();
-});
+app.UseGzipRequestDecompression();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
