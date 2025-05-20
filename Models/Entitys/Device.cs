@@ -25,12 +25,12 @@
         /// <summary>
         /// Dilitium 5 public key
         /// </summary>
-        public string SPK { get; set; }
+        public byte[] SPK { get; set; }
 
         /// <summary>
         /// Dilitium 5 signature of the AccountId
         /// </summary>
-        public string Signature { get; set; }
+        public byte[] Signature { get; set; }
 
         /// <summary>
         /// Device prekeys

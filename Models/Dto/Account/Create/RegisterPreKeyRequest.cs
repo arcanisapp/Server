@@ -3,8 +3,8 @@
     public class RegisterPreKeyRequest
     {
         public string Id { get; set; }
-        public string PK { get; set; } //Base 64
-        public string PKSignature { get; set; } //Base 64
+        public byte[] PK { get; set; } //Base 64
+        public byte[] PKSignature { get; set; } //Base 64
     }
 
 

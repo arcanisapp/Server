@@ -20,13 +20,11 @@ namespace Server.Controllers
 
                 var signatureBytes = Convert.FromBase64String(signatureHeader);
 
-                string rawJson;
-                using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
-                {
-                    rawJson = await reader.ReadToEndAsync();
-                }
+                using var ms = new MemoryStream();
+                await Request.Body.CopyToAsync(ms);
+                var rawData = ms.ToArray();
 
-                var result = await accountService.CreateAccountAsync(signatureBytes, rawJson);
+                var result = await accountService.CreateAccountAsync(signatureBytes, rawData);
 
                 if (!result)
                     return BadRequest("Invalid signature or data");

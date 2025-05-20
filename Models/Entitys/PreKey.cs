@@ -19,12 +19,12 @@
         /// <summary>
         /// Kyber 1024 public key
         /// </summary>
-        public string PK { get; set; }
+        public byte[] PK { get; set; }
 
         /// <summary>
         /// Dilitium 5 device signature of the public key
         /// </summary>
-        public string PKSignature { get; set; }
+        public byte[] PKSignature { get; set; }
 
         public bool IsUsed { get; set; }
     }

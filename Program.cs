@@ -1,6 +1,9 @@
+using MessagePack.AspNetCoreMvcFormatter;
+using MessagePack;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Extensions;
+using Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // например, 10MB
+    serverOptions.Limits.MaxRequestBodySize = 10 * 1024 * 1024;
 });
 
 builder.Services.AddControllersWithViews();
@@ -24,6 +27,14 @@ builder.Services.AddCustomRateLimiters();
 
 builder.Services.AddAppServices();
 
+builder.Services.AddSignalR().AddMessagePackProtocol();
+
+builder.Services.AddControllers()
+    .AddMvcOptions(options =>
+    {
+        options.InputFormatters.Insert(0, new MessagePackInputFormatter(MessagePackSerializerOptions.Standard));
+    });
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -36,10 +47,15 @@ if (app.Environment.IsDevelopment())
 app.UseGzipRequestDecompression();
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
-app.UseRouting();
+
+app.UseRouting();   
 
 app.MapControllers();
+
+app.MapHub<DeviceProvisioningHub>("/devicehub");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Captcha}/{action=Index}/{id?}");
