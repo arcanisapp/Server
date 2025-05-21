@@ -18,6 +18,8 @@ namespace Server.Extensions
 
             services.AddScoped<IDeviceService, DeviceService>();
 
+            services.AddScoped<IContactService, ContactService>();
+
             services.AddSingleton<IMlDsaKeyVerifier, MlDsaKeyVerifier>();
 
             services.AddSingleton<ITimestampValidator>(new TimestampValidator(maxSkewSeconds: 30));

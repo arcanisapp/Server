@@ -8,7 +8,6 @@ using Server.Models.Dto.Device.Add;
 using Server.Models.Dto.Device.Confirm;
 using Server.Models.Entitys;
 using Server.Services.Validation;
-using System.Security.Principal;
 
 namespace Server.Services
 {
@@ -55,7 +54,7 @@ namespace Server.Services
                 byte[] msgpackBytes = MessagePackSerializer.Serialize(responce);
 
                 await deviceProvisionHub.Clients.Group(request.TempId).SendAsync("ReceiveProvisioningResponse", msgpackBytes);
-               
+
                 return true;
             }
             catch

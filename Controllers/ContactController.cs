@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using Server.Services;
 
 namespace Server.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IAccountService accountService) : ControllerBase
+    [Route("api/contact")]
+    public class ContactController(IContactService contactService) : ControllerBase
     {
-        [HttpPost("register")]
-        [EnableRateLimiting("AddDevice")]
-        public async Task<IActionResult> Register()
+        [HttpPost("lookup")]
+        public async Task<IActionResult> LookupUser()
         {
             try
             {
@@ -23,10 +21,7 @@ namespace Server.Controllers
                 await Request.Body.CopyToAsync(ms);
                 var rawData = ms.ToArray();
 
-                var result = await accountService.CreateAccountAsync(signatureBytes, rawData);
-
-                if (!result)
-                    return BadRequest("Invalid signature or data");
+                var responce = await contactService.LookupUserRequestAsync(signatureBytes, rawData);
 
                 return Ok();
             }
@@ -36,4 +31,5 @@ namespace Server.Controllers
             }
         }
     }
+
 }
