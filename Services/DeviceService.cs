@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Server.Crypto;
 using Server.Data;
+using Server.Data.RedisStore;
 using Server.Hubs;
 using Server.Models.Dto.Device.Add;
 using Server.Models.Dto.Device.Confirm;
@@ -20,7 +21,8 @@ namespace Server.Services
         ITimestampValidator timestampValidator,
         IMlDsaKeyVerifier mlDsaKeyVerifier,
         AppDbContext appDbContext,
-        IHubContext<DeviceProvisioningHub> deviceProvisionHub) : IDeviceService
+        IHubContext<DeviceProvisioningHub> deviceProvisionHub,
+        ITempIdConnectionStore tempIdConnectionStore) : IDeviceService
     {
         public async Task<bool> AddDeviceRequestAsync(byte[] requestSignature, byte[] rawData)
         {
@@ -53,7 +55,12 @@ namespace Server.Services
                 };
                 byte[] msgpackBytes = MessagePackSerializer.Serialize(responce);
 
-                await deviceProvisionHub.Clients.Group(request.TempId).SendAsync("ReceiveProvisioningResponse", msgpackBytes);
+                var connectionId = await tempIdConnectionStore.GetConnectionIdAsync(request.TempId);
+                if (string.IsNullOrEmpty(connectionId))
+                    return false;
+
+                await deviceProvisionHub.Clients.Client(connectionId)
+                    .SendAsync("ReceiveProvisioningResponse", msgpackBytes);
 
                 return true;
             }
