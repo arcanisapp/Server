@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Org.BouncyCastle.Ocsp;
 using Server.Data.RedisStore;
 
 namespace Server.Hubs
 {
-    public class DeviceProvisioningHub(ITempIdConnectionStore _tempIdConnectionStore) : Hub
+    public class DeviceProvisioningHub(ITempIdConnectionStore tempIdConnectionStore) : Hub
     {
         public async Task SubscribeToProvisioningChannel(string tempId)
         {
@@ -15,7 +14,7 @@ namespace Server.Hubs
 
         public async Task UnsubscribeFromProvisioningChannel(string tempId)
         {
-            await tempIdConnectionStore.RemoveAsync(tempId);
+            //await tempIdConnectionStore.RemoveAsync(tempId);
         }
     }
 }
